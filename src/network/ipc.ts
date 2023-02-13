@@ -112,10 +112,6 @@ function getConnectedPeerIds(): Promise<string[]> {
   return call(IpcMethods.GetConnectedPeerIds)
 }
 
-function getNodeMultiAddress(): Promise<string[]> {
-  return call(IpcMethods.GetNodeMultiAddress)
-}
-
 export {
   call,
   getCollateralInfo,
@@ -139,7 +135,6 @@ export {
   getUptime,
   findNOnlinePeer,
   getConnectedPeerIds,
-  getNodeMultiAddress,
   putDHT,
   getDHT
 }

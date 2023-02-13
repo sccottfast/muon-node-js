@@ -240,31 +240,18 @@ export default class CollateralInfoPlugin extends CallablePlugin{
       }
     }while(!rawResult)
 
-    let allNodes = rawResult._nodes
-      .filter(item => item.active)
-      .map((item): MuonNodeInfo => ({
-        id: BigInt(item.id).toString(),
-        staker: item.stakerAddress,
-        wallet: item.nodeAddress,
-        peerId: item.peerId,
-        isDeployer: item.isDeployer,
-        isOnline: item.nodeAddress === process.env.SIGN_WALLET_ADDRESS || heartbeatCache.has(item.peerId)
-      }))
-
-    let exist = {};
-    allNodes = allNodes.filter(p => {
-      if(exist[p.wallet] || exist[p.peerId])
-        return false;
-
-      exist[p.peerId] = true
-      exist[p.wallet] = true
-
-      return true
-    })
-
     return {
       lastUpdateTime: parseInt(rawResult._lastUpdateTime),
-      allNodes
+      allNodes: rawResult._nodes
+        .filter(item => item.active)
+        .map((item): MuonNodeInfo => ({
+          id: BigInt(item.id).toString(),
+          staker: item.stakerAddress,
+          wallet: item.nodeAddress,
+          peerId: item.peerId,
+          isDeployer: item.isDeployer,
+          isOnline: item.nodeAddress === process.env.SIGN_WALLET_ADDRESS || heartbeatCache.has(item.peerId)
+        }))
     }
   }
 

@@ -74,7 +74,6 @@ export class MuonRouting implements PeerRouting, Startable {
     this.apis = init.baseUrls.map(baseUrl => axios.create({
       baseURL: baseUrl,
       responseType: 'json',
-      timeout: 5000,
     }))
 
     log(`enabled via %o`, init.baseUrls)
@@ -127,12 +126,7 @@ export class MuonRouting implements PeerRouting, Startable {
 
       const randomIndex = Math.floor(Math.random() * this.apis.length)
       log(`requesting to delegate server %o ...`, this.apis[randomIndex].defaults.baseURL)
-      let result = await this.apis[randomIndex].post(
-        '/findpeer',
-        {id: `${id}`},
-        {
-          timeout: options.timeout
-        })
+      let result = await this.apis[randomIndex].post('/findpeer', {id: `${id}`})
         .then(({data}) => data)
 
       log(`delegate server response %O`, result)
@@ -204,16 +198,11 @@ export class MuonRouting implements PeerRouting, Startable {
         }
 
         // @ts-ignore
-        const responses = await Promise.any(this.apis.map(api => {
-          return api.post('/discovery', discoveryData, {timeout: 5000})
-            .then(() => "OK")
-            .catch(e => {
-              log.error(`sent to ${api.defaults.baseURL} error: %O`, e)
-              return e.message || 'unknown error'
-            })
+        await Promise.any(this.apis.map(api => {
+          return api.post('/discovery', discoveryData)
         }))
 
-        log('discovery sent done. result: %o', responses)
+        log('discovery sent successfully')
       }catch (e) {
         log.error(`discovery error: %O`, e)
       }

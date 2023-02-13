@@ -1,5 +1,4 @@
 import {Router} from 'express'
-import asyncHandler from 'express-async-handler'
 import RequestLog from '../../common/db-models/RequestLog.js'
 import {QueueProducer} from '../../common/message-bus/index.ts'
 import {parseBool} from '../../utils/helpers.js'
@@ -161,8 +160,7 @@ const MUON_REQUEST_SCHEMA = {
 
 let router = Router();
 
-router.use('/', mixGetPost, asyncHandler(async (req, res, next) => {
-  // @ts-ignore
+router.use('/', mixGetPost, async (req, res, next) => {
   let {app, method, params = {}, nSign, mode = "sign", gwSign} = req.mixed
 
   if (!["sign", "view"].includes(mode)) {
@@ -262,6 +260,6 @@ router.use('/', mixGetPost, asyncHandler(async (req, res, next) => {
         })
       })
   }
-}))
+})
 
 export default router
